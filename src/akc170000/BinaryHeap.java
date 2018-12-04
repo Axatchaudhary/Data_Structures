@@ -3,6 +3,7 @@
 // Change to your netid
 package akc170000;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
@@ -20,6 +21,11 @@ public class BinaryHeap<T extends Comparable<? super T>> {
 
     // add method: resize pq if needed
     public boolean add(T x) {
+        if (size == maxCapacity){
+            return false;
+        }
+        pq[size++] = x;
+        percolateUp(size-1);
         return true;
     }
 
@@ -39,7 +45,13 @@ public class BinaryHeap<T extends Comparable<? super T>> {
 
     // return null if pq is empty
     public T poll() {
-        return null;
+        if (size == 0) {
+            return null;
+        }
+        T temp = (T) pq[0];
+        pq[0] = pq[--size];
+        percolateDown(0);
+        return temp;
     }
 
     public T min() {
@@ -48,23 +60,47 @@ public class BinaryHeap<T extends Comparable<? super T>> {
 
     // return null if pq is empty
     public T peek() {
-        return null;
+        return size == 0 ? null : (T) pq[0];
     }
 
     int parent(int i) {
-        return (i-1)/2;
+        return (i-1)>>1;
     }
 
     int leftChild(int i) {
-        return 2*i + 1;
+        return (i<<1) + 1;
     }
 
     /** pq[index] may violate heap order with parent */
     void percolateUp(int index) {
+        Comparable temp = pq[index]; // store value of ith element
+
+        // go up and bring down elements while they are greater than 'temp'
+        while (index > 0 && compare(temp, pq[parent(index)]) < 0){
+//            pq[index] = pq[parent(index)]; // bringing down parent to one level below
+            move(index, pq[parent(index)]);
+            index = parent(index);
+        }
+        move(index, temp); // move saved element to empty position of heap
     }
 
     /** pq[index] may violate heap order with children */
     void percolateDown(int index) {
+        Comparable temp = pq[index]; // save current element
+        int c = leftChild(index); // left child
+        // go down while current element is greater than its children
+        while (c < size){ // if left child exists
+            if (c < size - 1 && compare(pq[c + 1], pq[c]) < 0){ // if right child exists and it is less than left one
+                c++; // change child to right child
+            }
+            // if current element is less than child then we have found the place for current element
+            if (compare(temp, pq[c]) <= 0) break;
+//            pq[index] = pq[c];
+            move(index, pq[c]);
+            index = c;
+            c = leftChild(index); // update to next left child
+        }
+        move(index, temp); // move current element to its place
     }
 
     void move(int dest, Comparable x) {
@@ -92,6 +128,7 @@ public class BinaryHeap<T extends Comparable<? super T>> {
 
     // Resize array to double the current size
     void resize() {
+        pq = Arrays.copyOf(pq, pq.length<<1);
     }
 
     public interface Index {
