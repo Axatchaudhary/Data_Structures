@@ -1,12 +1,13 @@
-// Starter code for LP5
-
-// Change to your netid
+/**
+ * @author Axat Chaudhari (akc170000)
+ * @author Jaiminee Kataria (jxk172330)
+ * @author Param Parikh (psp170230)
+ * @author Tej Patel (txp172630)
+ */
 package akc170000;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.NoSuchElementException;
-import java.util.PriorityQueue;
 
 public class BinaryHeap<T extends Comparable<? super T>> {
     Comparable[] pq;
@@ -19,9 +20,13 @@ public class BinaryHeap<T extends Comparable<? super T>> {
         this.maxCapacity = maxCapacity;
     }
 
-    // add method: resize pq if needed
+    /**
+     * add x to PriorityQueue
+     * @param x element to add
+     * @return true if queue reached max capacity else false
+     */
     public boolean add(T x) {
-        if (size == maxCapacity){
+        if (size() == maxCapacity){
             return false;
         }
         pq[size++] = x;
@@ -29,11 +34,20 @@ public class BinaryHeap<T extends Comparable<? super T>> {
         return true;
     }
 
+    /**
+     * same as add(x)
+     * @param x
+     * @return true if reached to max capacity else false
+     */
     public boolean offer(T x) {
         return add(x);
     }
 
-    // throw exception if pq is empty
+    /**
+     * extract min from queue
+     * @return min element from queue
+     * @throws NoSuchElementException when queue is empty
+     */
     public T remove() throws NoSuchElementException {
         T result = poll();
         if(result == null) {
@@ -43,9 +57,12 @@ public class BinaryHeap<T extends Comparable<? super T>> {
         }
     }
 
-    // return null if pq is empty
+    /**
+     * same as remove()
+     * @return null if queue is empty
+     */
     public T poll() {
-        if (size == 0) {
+        if (isEmpty()) {
             return null;
         }
         T temp = (T) pq[0];
@@ -54,19 +71,36 @@ public class BinaryHeap<T extends Comparable<? super T>> {
         return temp;
     }
 
+    /**
+     * get min element
+     * @return element with max priority
+     */
     public T min() {
         return peek();
     }
 
-    // return null if pq is empty
+    /**
+     * same as min()
+     * @return element with max priority
+     */
     public T peek() {
-        return size == 0 ? null : (T) pq[0];
+        return isEmpty() ? null : (T) pq[0];
     }
 
+    /**
+     * parent of i
+     * @param i index
+     * @return (i-1)*2
+     */
     int parent(int i) {
         return (i-1)>>1;
     }
 
+    /**
+     * left child of i
+     * @param i index
+     * @return i*2 + 1
+     */
     int leftChild(int i) {
         return (i<<1) + 1;
     }
@@ -77,8 +111,7 @@ public class BinaryHeap<T extends Comparable<? super T>> {
 
         // go up and bring down elements while they are greater than 'temp'
         while (index > 0 && compare(temp, pq[parent(index)]) < 0){
-//            pq[index] = pq[parent(index)]; // bringing down parent to one level below
-            move(index, pq[parent(index)]);
+            move(index, pq[parent(index)]); // bringing down parent to one level below
             index = parent(index);
         }
         move(index, temp); // move saved element to empty position of heap
@@ -95,7 +128,6 @@ public class BinaryHeap<T extends Comparable<? super T>> {
             }
             // if current element is less than child then we have found the place for current element
             if (compare(temp, pq[c]) <= 0) break;
-//            pq[index] = pq[c];
             move(index, pq[c]);
             index = c;
             c = leftChild(index); // update to next left child
@@ -103,6 +135,11 @@ public class BinaryHeap<T extends Comparable<? super T>> {
         move(index, temp); // move current element to its place
     }
 
+    /**
+     * move x to dest
+     * @param dest position to store x
+     * @param x element to store at position dest
+     */
     void move(int dest, Comparable x) {
         pq[dest] = x;
     }
@@ -118,19 +155,32 @@ public class BinaryHeap<T extends Comparable<? super T>> {
         }
     }
 
+    /**
+     * is queue empty or not
+     * @return true if empty otherwise false
+     */
     public boolean isEmpty() {
         return size() == 0;
     }
 
+    /**
+     * size of queue
+     * @return #elements in queue
+     */
     public int size() {
         return size;
     }
 
-    // Resize array to double the current size
+    /**
+     * resize q to double the size
+     */
     void resize() {
         pq = Arrays.copyOf(pq, pq.length<<1);
     }
 
+    /**
+     * Interface for IndexedPriorityQueue
+     */
     public interface Index {
         public void putIndex(int index);
         public int getIndex();
