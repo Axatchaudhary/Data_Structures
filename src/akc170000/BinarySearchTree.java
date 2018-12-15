@@ -19,7 +19,7 @@ import java.util.Stack;
 public class BinarySearchTree<T extends Comparable<? super T>> implements Iterable<T> {
     protected Entry<T> root;
     protected int size; // #elements present in tree
-    private Stack<Entry<T>> parentStack; // parent stack to keep track of search path
+    protected Stack<Entry<T>> parentStack; // parent stack to keep track of search path
     public BinarySearchTree() {
         root = null;
         size = 0;
