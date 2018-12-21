@@ -3,8 +3,6 @@
  */
 package akc170000;
 
-import java.util.Comparator;
-
 public class AVLTree<T extends Comparable<? super T>> extends BinarySearchTree<T> {
     static class Entry<T> extends BinarySearchTree.Entry<T> {
         int height;
@@ -13,6 +11,8 @@ public class AVLTree<T extends Comparable<? super T>> extends BinarySearchTree<T
             height = 0;
         }
     }
+
+
 
     // LL >> R(x)
     private BinarySearchTree.Entry case1(BinarySearchTree.Entry x){
@@ -51,23 +51,37 @@ public class AVLTree<T extends Comparable<? super T>> extends BinarySearchTree<T
         z.left = x;
         return z;
     }
+
     AVLTree() {
         super();
     }
 
+    private void fixAVL(){
 
-    private void fixAVL(BinarySearchTree.Entry x){
-        BinarySearchTree.Entry parent = parentStack.pop();
+        while(!parentStack.isEmpty()) {
+            BinarySearchTree.Entry parent = parentStack.pop();
+            get(parent).height = 1 + Math.max(get(parent.left).height, get(parent.right).height);
+            int leftHeight = parent.left == null ? -1 : get(parent.left).height;
+            int rightHeight = parent.right == null ? -1 : get(parent.right).height;
+            if (Math.abs(rightHeight - leftHeight) > 1){
+
+            }else{
+                break;
+            }
+
+        }
+    }
+
+    Entry get(BinarySearchTree.Entry x){
+        return (Entry) x;
     }
 
     @Override
-    public boolean add(T k) {
+    public boolean add(T k){
         BinarySearchTree.Entry x = new BinarySearchTree.Entry(k,null,null);
         ((Entry) x).height = 0;
         if(super.add(x)){
-            BinarySearchTree.Entry p_t = parentStack.pop(); // parent of the node x
-            BinarySearchTree.Entry g_t =parentStack.pop(); // grand parent of node x
-
+            fixAVL();
             return true;
         }else{
             // adjust the height of current node
